@@ -9,7 +9,7 @@ step_growth:
 	@mkdir -p simu_step_$(RUN)
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	BSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	(cd simu_step_$(RUN); $(LMP) -i ../in.bond_3d -var vseed $${VSEED} -var bseed $${BSEED} -var prob $(STEP_PROB) )
+	(cd simu_step_$(RUN); $(LMP) -i ../in.step -var vseed $${VSEED} -var bseed $${BSEED} -var prob $(STEP_PROB) )
 
 chain_growth:
 	@mkdir -p simu_chain_$(RUN)
