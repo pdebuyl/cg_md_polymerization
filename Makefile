@@ -14,10 +14,11 @@ step_growth:
 	BSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	(cd simu_step_$(RUN); $(LMP) -i ../in.step -var vseed $${VSEED} -var bseed $${BSEED} -var prob $(STEP_PROB) )
 
-chain_growth: mirrorlj.txt in.chain
+simu_chain_%/log.lammps simu_chain_%/dump_3d.h5: mirrorlj.txt in.chain
 	@mkdir -p simu_chain_$(RUN)
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	CSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	ISEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	(cd simu_chain_$(RUN); $(LMP) -i ../in.chain -var vseed $${VSEED} -var cseed $${CSEED} -var iseed $${ISEED} -var prob $(CHAIN_PROB) )
 
+chain_growth: simu_chain_test/log.lammps simu_chain_test/dump_3d.h5
