@@ -8,11 +8,13 @@ STEP_PROB=0.01
 mirrorlj.txt: code/write_tabulated_potential.py
 	python $< > $@
 
-step_growth:
-	@mkdir -p simu_step_$(RUN)
+simu_step_%/log.lammps simu_step_%/dump_3d.h5: mirrorlj.txt in.step
+	@mkdir -p simu_step_$*
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	BSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	(cd simu_step_$(RUN); $(LMP) -i ../in.step -var vseed $${VSEED} -var bseed $${BSEED} -var prob $(STEP_PROB) )
+	(cd simu_step_$*; $(LMP) -i ../in.step -var vseed $${VSEED} -var bseed $${BSEED} -var prob $(STEP_PROB) )
+
+step_growth: simu_step_test/log.lammps simu_step_test/dump_3d.h5
 
 simu_chain_%/log.lammps simu_chain_%/dump_3d.h5: mirrorlj.txt in.chain
 	@mkdir -p simu_chain_$(RUN)
