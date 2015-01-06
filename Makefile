@@ -4,6 +4,7 @@ RUN=test
 
 CHAIN_PROB=1.0
 STEP_PROB=0.01
+SITES=2
 
 mirrorlj.txt: code/write_tabulated_potential.py
 	python $< > $@
@@ -21,6 +22,7 @@ simu_chain_%/log.lammps simu_chain_%/dump_3d.h5: mirrorlj.txt in.chain
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	CSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	ISEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	(cd simu_chain_$(RUN); $(LMP) -i ../in.chain -var vseed $${VSEED} -var cseed $${CSEED} -var iseed $${ISEED} -var prob $(CHAIN_PROB) )
+	(cd simu_chain_$(RUN); $(LMP) -i ../in.chain -var vseed $${VSEED} -var cseed $${CSEED} \
+	-var iseed $${ISEED} -var prob $(CHAIN_PROB) -var sites $(SITES) )
 
 chain_growth: simu_chain_test/log.lammps simu_chain_test/dump_3d.h5
