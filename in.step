@@ -34,7 +34,8 @@ fix 1 all nvt temp 1. 1. 10.
 compute 1 all property/atom nbonds
 compute 2 all reduce sum c_1
 compute 3 all reduce max c_1
-thermo_style custom time etotal temp ke evdwl ebond pe press density c_2 c_3
+variable zero equal 0
+thermo_style custom time etotal temp ke evdwl ebond pe press density c_2 c_3 v_zero
 thermo 100
 
 run 10000
@@ -45,6 +46,8 @@ write_dump all h5md dump_3d.h5 file_from hd1 species
 unfix 1
 fix 1 all nve
 fix fbc all bond/create 100 1 1 1. 1 prob ${prob} ${bseed} iparam 8 1 jparam 8 1
+thermo_style custom time etotal temp evdwl ebond press density c_2 c_3 f_fbc[1]
+comm_modify cutoff 3
 
 run 20000
 
