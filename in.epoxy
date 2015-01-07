@@ -1,0 +1,53 @@
+# Simulation of crosslinking
+
+# Setting a 3D periodic system with lj units
+units lj
+dimension 3
+atom_style bond
+boundary p p p
+
+variable rho equal 0.8
+variable N equal 448
+variable side equal (${N}/${rho})^(1./3.)
+print "rho ${rho} N ${N} side ${side}"
+
+read_data data.epoxy
+replicate 4 4 4 
+region box_region block EDGE EDGE EDGE EDGE EDGE EDGE
+
+mass * 1
+velocity all create 1. 8273
+
+pair_style lj/cut 1.13
+pair_coeff * * 1.0 1.0 1.122462048309373
+pair_modify shift yes
+
+bond_style hybrid fene table spline 2000
+bond_coeff 1 table mirrorlj.txt MIRROR_LJ
+bond_coeff 2 fene 30.0 1.5 1.0 1.0
+special_bonds fene extra 336
+
+neighbor 0.3 bin
+neigh_modify delay 0 every 1 check yes
+
+variable zero equal 0
+thermo_style custom time etotal temp ke evdwl ebond pe press density
+thermo 100
+
+fix 1 all nve/limit 0.1
+fix 2 all temp/rescale 1 1.0 1.0 10. 0.25 0.5
+run 10000
+fix 3 all deform 10 x final 0 ${side} y final 0 ${side} z final 0 ${side}
+run 10000
+unfix 3 
+unfix 2
+unfix 1
+
+fix 1 all nvt temp 1. 1. 10.
+run 30000
+
+unfix 1
+fix 1 all nve
+
+run 10000
+
