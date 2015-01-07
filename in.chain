@@ -24,9 +24,9 @@ pair_style lj/cut 1.13
 pair_coeff * * 1.0 1.0 1.122462048309373
 pair_modify shift yes
 
-bond_style table spline 2000
+bond_style table spline 2001
 bond_coeff 1 ../mirrorlj.txt MIRROR_LJ
-special_bonds lj 1 1 1 extra 336 
+special_bonds lj 0 1 1 extra 336 
 
 neighbor 0.3 bin
 neigh_modify delay 0 every 1 check yes

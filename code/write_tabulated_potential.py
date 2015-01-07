@@ -2,7 +2,7 @@ from __future__ import print_function, division
 
 import numpy as np
 
-N = 2000
+N = 2001
 eps = 0.1
 
 rc = 2.**(1./6.)
@@ -46,7 +46,7 @@ if do_plot:
     plt.ylim(-2,5)
     plt.show()
 
-r = np.linspace(rc, 2*rc-eps, N)
+r = np.linspace(eps, 2*rc-eps, N)
 
 
 print("# rlo={rlo}, rhi={rhi}".format(rlo=rc, rhi=2*rc-eps))
@@ -54,7 +54,10 @@ print("""# Mirror Lennard-Jones potential
 
 MIRROR_LJ
 N {N} FP {fplo} {fphi}
-""".format(N=N, rlo=rc, rhi=2*rc-eps, fplo=mirror_FPRIME_LJ(rc), fphi=mirror_FPRIME_LJ(2*rc-eps)))
+""".format(N=N, rlo=eps, rhi=2*rc-eps, fplo=FPRIME_LJ(eps), fphi=mirror_FPRIME_LJ(2*rc-eps)))
 
 for idx, x in enumerate(r):
-    print("%i %f %f %f" % (idx+1, x, mirror_LJ(x), mirror_F_LJ(x)))
+    if x<rc:
+        print("%i %f %f %f" % (idx+1, x, LJ(x), F_LJ(x)))
+    else:
+        print("%i %f %f %f" % (idx+1, x, mirror_LJ(x), mirror_F_LJ(x)))
