@@ -22,7 +22,7 @@ pair_style lj/cut 1.13
 pair_coeff * * 1.0 1.0 1.122462048309373
 pair_modify shift yes
 
-bond_style hybrid fene table spline 2000
+bond_style hybrid fene table spline 2001
 bond_coeff 1 table mirrorlj.txt MIRROR_LJ
 bond_coeff 2 fene 30.0 1.5 1.0 1.0
 special_bonds fene extra 336
@@ -31,7 +31,7 @@ neighbor 0.3 bin
 neigh_modify delay 0 every 1 check yes
 
 variable zero equal 0
-thermo_style custom time etotal temp ke evdwl ebond pe press density
+thermo_style custom time etotal temp ke evdwl ebond pe press density v_zero v_zero
 thermo 100
 
 fix 1 all nve/limit 0.1
@@ -48,6 +48,9 @@ run 30000
 
 unfix 1
 fix 1 all nve
+fix fbc all bond/create 100 3 1 1. 1 prob 0.1 73929 iparam 5 3 jparam 1 1 
+comm_modify cutoff 3
 
-run 10000
+thermo_style custom time etotal temp ke evdwl ebond pe press density f_fbc[1] f_fbc[2]
+run 50000
 

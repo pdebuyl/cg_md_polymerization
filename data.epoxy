@@ -6,6 +6,9 @@ Single polymer chain of 5 units
 3 atom types
 2 bond types
 
+8 extra bond per atom
+336 extra special per atom
+
 0 2 xlo xhi
 0 2 ylo yhi
 0 7 zlo zhi
