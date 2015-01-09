@@ -26,3 +26,10 @@ simu_chain_%/log.lammps simu_chain_%/dump_3d.h5: mirrorlj.txt in.chain
 	-var iseed $${ISEED} -var prob $(CHAIN_PROB) -var sites $(SITES) )
 
 chain_growth: simu_chain_test/log.lammps simu_chain_test/dump_3d.h5
+
+simu_epoxy_%/log.lammps simu_epoxy_%/dump_3d.h5: mirrorlj.txt in.epoxy
+	@mkdir -p simu_epoxy_$*
+	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
+	(cd simu_epoxy_$*; $(LMP) -i ../in.epoxy -var vseed $${VSEED} )
+
+epoxy: simu_epoxy_test/log.lammps simu_epoxy_test/dump_3d.h5

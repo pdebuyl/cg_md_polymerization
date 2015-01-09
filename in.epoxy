@@ -9,22 +9,22 @@ boundary p p p
 variable rho equal 0.8
 variable N equal 432
 variable side equal (${N}/${rho})^(1./3.)
-print "rho ${rho} N ${N} side ${side}"
+print "rho ${rho} N ${N} side ${side} vseed ${vseed}"
 
-read_data data.epoxy
+read_data ../data.epoxy
 replicate 5 4 4
 region box_region block EDGE EDGE EDGE EDGE EDGE EDGE
 create_atoms 3 random 32 9291 box_region
 
 mass * 1
-velocity all create 1. 8273
+velocity all create 1. ${vseed}
 
 pair_style lj/cut 1.13
 pair_coeff * * 1.0 1.0 1.122462048309373
 pair_modify shift yes
 
 bond_style hybrid fene table spline 2001
-bond_coeff 1 table mirrorlj.txt MIRROR_LJ
+bond_coeff 1 table ../mirrorlj.txt MIRROR_LJ
 bond_coeff 2 fene 30.0 1.5 1.0 1.0
 special_bonds fene extra 336
 
