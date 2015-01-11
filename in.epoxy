@@ -8,14 +8,14 @@ boundary p p p
 newton on off
 
 variable rho equal 0.8
-variable N equal 432
+variable N equal 5400
 variable side equal (${N}/${rho})^(1./3.)
-print "rho ${rho} N ${N} side ${side} vseed ${vseed}"
+print "rho ${rho} N ${N} side ${side} vseed ${vseed} aseed ${aseed}"
 
 read_data ../data.epoxy
-replicate 5 4 4
+replicate 10 10 10
 region box_region block EDGE EDGE EDGE EDGE EDGE EDGE
-create_atoms 3 random 32 9291 box_region
+create_atoms 3 random 400 ${aseed} box_region
 group X type 3
 
 mass * 1
@@ -38,12 +38,21 @@ thermo_style custom time etotal temp ke evdwl ebond pe press density v_zero v_ze
 thermo 1000
 
 timestep 0.000001
-fix 1 all nve/limit 0.1
+fix 1 all nve/limit 0.01
 fix 2 all temp/rescale 1 1.0 1.0 1. 0.5
-run 50000
-timestep 0.001
-thermo 100
-run 1000
+min_style fire
+
+variable iii loop 100
+label start_of_loop_1
+variable ts equal $(v_iii*0.00000001)
+print ${ts}
+timestep ${ts}
+run 2000
+minimize 0.5 0.1 2000 2000
+
+next iii
+jump SELF start_of_loop_1
+
 timestep 0.005
 run 3790
 fix 3 all deform 10 x final 0 ${side} y final 0 ${side} z final 0 ${side}
