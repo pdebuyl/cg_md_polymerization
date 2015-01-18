@@ -70,9 +70,7 @@ fix fbc all bond/create 100 3 1 1. 1 prob 0.1 73929 iparam 5 3 jparam 1 1
 comm_modify cutoff 3
 
 compute 1 all property/atom nbonds
-dump nb X custom 200 nb.*.txt.gz c_1
-dump_modify nb pad 6
+dump nb X custom 200 nb.txt.gz c_1
 
 thermo_style custom time etotal temp ke evdwl ebond pe press density f_fbc[1] f_fbc[2]
 run 50000
-
