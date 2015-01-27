@@ -1,10 +1,12 @@
 
 LMP=lmp_mpi
+PY=python
 RUN=test
 
 RATE=0.10
 SITES=0001
 TH=8
+FUNC=5
 
 CHAIN_LAMMPS=simu_chain_lammps_K$(RATE)_TH$(TH)_S$(SITES)
 
@@ -36,3 +38,11 @@ simu_epoxy_%/log.lammps simu_epoxy_%/nb.txt.gz: mirrorlj.txt in.epoxy
 	(cd simu_epoxy_$*; $(LMP) -i ../in.epoxy -var vseed $${VSEED} -var aseed $${ASEED} )
 
 epoxy: simu_epoxy_test/log.lammps simu_epoxy_test/nb.txt.gz
+
+$(EPOXY_ESPP)_%/log.espp $(EPOXY_ESPP)_%/dump.h5: code/epoxy_run.py code/epoxy_h5md.py code/epoxy_setup.py
+	@mkdir -p $(EPOXY_ESPP)_$*
+	SEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
+	(cd $(EPOXY_ESPP)_$*; $(PY) ../code/epoxy_run.py 200 80 --seed $${SEED} --rate $(RATE) \
+	 --interval $(TH) --file dump.h5 > log.espp)
+
+epoxy_espp: $(EPOXY_ESPP)_$(RUN)/log.espp $(EPOXY_ESPP)_$(RUN)/dump.h5
