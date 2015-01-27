@@ -9,6 +9,7 @@ TH=8
 FUNC=5
 
 CHAIN_LAMMPS=simu_chain_lammps_K$(RATE)_TH$(TH)_S$(SITES)
+EPOXY_ESPP=simu_epoxy_espp_K$(RATE)_TH$(TH)_F$(FUNC)
 
 mirrorlj.txt: code/write_tabulated_potential.py
 	python $< > $@
