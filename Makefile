@@ -2,9 +2,11 @@
 LMP=lmp_mpi
 RUN=test
 
-CHAIN_PROB=1.0
-STEP_PROB=0.01
-SITES=2
+RATE=0.10
+SITES=0001
+TH=8
+
+CHAIN=simu_chain_lammps_K$(RATE)_TH$(TH)_S$(SITES)
 
 mirrorlj.txt: code/write_tabulated_potential.py
 	python $< > $@
@@ -17,15 +19,15 @@ simu_step_%/log.lammps simu_step_%/dump_3d.h5: mirrorlj.txt in.step
 
 step_growth: simu_step_test/log.lammps simu_step_test/dump_3d.h5
 
-simu_chain_%/log.lammps simu_chain_%/dump_3d.h5: mirrorlj.txt in.chain
-	@mkdir -p simu_chain_$*
+$(CHAIN)_%/log.lammps $(CHAIN)_%/dump_3d.h5: mirrorlj.txt in.chain
+	@mkdir -p $(CHAIN)_$*
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	CSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	ISEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	(cd simu_chain_$*; $(LMP) -i ../in.chain -var vseed $${VSEED} -var cseed $${CSEED} \
-	-var iseed $${ISEED} -var prob $(CHAIN_PROB) -var sites $(SITES) )
+	(cd $(CHAIN)_$*; $(LMP) -i ../in.chain -var vseed $${VSEED} -var cseed $${CSEED} \
+	-var iseed $${ISEED} -var rate $(RATE) -var sites $(SITES) -var theta $(TH) )
 
-chain_growth: simu_chain_test/log.lammps simu_chain_test/dump_3d.h5
+chain_growth: $(CHAIN)_$(RUN)/log.lammps $(CHAIN)_$(RUN)/dump_3d.h5
 
 simu_epoxy_%/log.lammps simu_epoxy_%/nb.txt.gz: mirrorlj.txt in.epoxy
 	@mkdir -p simu_epoxy_$*
