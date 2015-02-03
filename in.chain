@@ -37,7 +37,7 @@ neigh_modify delay 0 every 1 check yes
 compute 1 all property/atom nbonds
 compute 2 all reduce sum c_1
 compute 3 all reduce max c_1
-thermo_style custom time etotal temp ke evdwl ebond pe press density c_2 c_3
+thermo_style custom time etotal temp ke evdwl ebond pe press density c_2 c_3 bonds
 thermo 100
 
 fix 1 all nve/limit 0.3
