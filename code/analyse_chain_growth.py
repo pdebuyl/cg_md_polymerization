@@ -20,6 +20,7 @@ from io import StringIO
 import matplotlib.pyplot as plt
 
 NNEIGH=3.5
+fraction = float(args.sites)/float(args.N)
 
 # Open lammps log file to extract thermodynamic observables
 def from_log(logfile,i0,i1):
@@ -36,15 +37,16 @@ for d in args.dirs:
     time, e_tot, temp, e_kin, e_vdw, e_bond, e_pot, press, rho, n_bonds, n_bonds_max, bonds = from_log(logfile, start_indices[-1][0], stop_indices[-1][0])
     time -= time[0]
     plt.plot(time, n_bonds)
-    nmax = min(int(1./(args.rate*args.fraction)), len(time))
+    nmax = min(int(1./(args.rate*fraction)), len(time))
     nmax = len(time)
-    p, success = leastsq(errfunc, [args.rate*NNEIGH*args.fraction, 0./args.rate], args=(time[:nmax], n_bonds[:nmax]))
+    p, success = leastsq(errfunc, [args.rate*NNEIGH*fraction, 0./args.rate], args=(time[:nmax], n_bonds[:nmax]))
     p_data.append(p)
     print p
 
-plt.plot(time, 1*(1.-np.exp(-time*args.rate*NNEIGH*args.fraction)))
+plt.plot(time, 1*(1.-np.exp(-time*args.rate*NNEIGH*fraction)))
 p_data = np.array(p_data)
-print p_data.mean(axis=0)
+print "fit rate", p_data.mean(axis=0)[0]
+print "th. rate", args.rate*NNEIGH*fraction
 plt.plot(time, fitfunc(p_data.mean(axis=0), time), 'k--')
 
 plt.show()
