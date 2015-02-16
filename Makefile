@@ -10,6 +10,7 @@ FUNC=5
 CHAIN_N=00512
 
 CHAIN_LAMMPS=simu_chain_lammps_K$(RATE)_TH$(TH)_S$(SITES)_N$(CHAIN_N)
+EPOXY_LAMMPS=simu_epoxy_lammps_K$(RATE)_TH$(TH)_F$(FUNC)
 EPOXY_ESPP=simu_epoxy_espp_K$(RATE)_TH$(TH)_F$(FUNC)
 
 mirrorlj.txt: code/write_tabulated_potential.py
@@ -33,13 +34,15 @@ $(CHAIN_LAMMPS)_%/log.lammps $(CHAIN_LAMMPS)_%/dump_3d.h5: mirrorlj.txt in.chain
 
 chain_growth: $(CHAIN_LAMMPS)_$(RUN)/log.lammps $(CHAIN_LAMMPS)_$(RUN)/dump_3d.h5
 
-simu_epoxy_%/log.lammps simu_epoxy_%/nb.txt.gz: mirrorlj.txt in.epoxy
-	@mkdir -p simu_epoxy_$*
+$(EPOXY_LAMMPS)_%/log.lammps $(EPOXY_LAMMPS)_%/nb.txt.gz: mirrorlj.txt in.epoxy
+	@mkdir -p $(EPOXY_LAMMPS)_$*
 	ASEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	(cd simu_epoxy_$*; $(LMP) -i ../in.epoxy -var vseed $${VSEED} -var aseed $${ASEED} )
+	ESEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
+	(cd simu_epoxy_$*; $(LMP) -i ../in.epoxy -var vseed $${VSEED} -var aseed $${ASEED} \
+	-var eseed $${ESEED} -var rate $(RATE) -var theta $(TH) -var func $(FUNC) )
 
-epoxy: simu_epoxy_test/log.lammps simu_epoxy_test/nb.txt.gz
+epoxy: $(EPOXY_LAMMPS)_$(RUN)/log.lammps $(EPOXY_LAMMPS)_$(RUN)/nb.txt.gz
 
 $(EPOXY_ESPP)_%/log.espp $(EPOXY_ESPP)_%/dump.h5: code/epoxy_run.py code/epoxy_h5md.py code/epoxy_setup.py
 	@mkdir -p $(EPOXY_ESPP)_$*

@@ -8,14 +8,19 @@ boundary p p p
 newton on off
 
 variable rho equal 0.8
-variable N equal 5400
+variable N equal 13500
 variable side equal (${N}/${rho})^(1./3.)
-print "rho ${rho} N ${N} side ${side} vseed ${vseed} aseed ${aseed}"
+print "info: rho ${rho} N ${N} side ${side} vseed ${vseed} aseed ${aseed} eseed ${eseed}"
+
+variable deltat equal 0.0025
+variable prob equal ${rate}*${deltat}*${theta}
+print "info: RATE ${rate} TH ${theta} prob ${prob}"
+
 
 read_data ../data.epoxy
-replicate 10 10 10
+replicate 25 10 10
 region box_region block EDGE EDGE EDGE EDGE EDGE EDGE
-create_atoms 3 random 400 ${aseed} box_region
+create_atoms 3 random 1000 ${aseed} box_region
 group X type 3
 
 mass * 1
@@ -66,11 +71,11 @@ run 30000
 
 unfix 1
 fix 1 all nve
-fix fbc all bond/create 100 3 1 1. 1 prob 0.1 73929 iparam 5 3 jparam 1 1 
+fix fbc all bond/create ${theta} 3 1 1.122462048309373 1 prob ${prob} ${eseed} iparam ${func} 3 jparam 1 1
 comm_modify cutoff 3
 
 compute 1 all property/atom nbonds
 dump nb X custom 200 nb.txt.gz c_1
 
 thermo_style custom time etotal temp ke evdwl ebond pe press density f_fbc[1] f_fbc[2]
-run 50000
+run 500000
