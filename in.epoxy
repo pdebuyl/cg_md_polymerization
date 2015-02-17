@@ -58,7 +58,7 @@ minimize 0.5 0.1 2000 2000
 next iii
 jump SELF start_of_loop_1
 
-timestep 0.005
+timestep ${deltat}
 run 3790
 fix 3 all deform 10 x final 0 ${side} y final 0 ${side} z final 0 ${side}
 run 16000
