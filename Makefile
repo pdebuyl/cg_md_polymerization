@@ -11,6 +11,7 @@ CHAIN_N=00512
 
 CHAIN_LAMMPS=simu_chain_lammps_K$(RATE)_TH$(TH)_S$(SITES)_N$(CHAIN_N)
 EPOXY_LAMMPS=simu_epoxy_lammps_K$(RATE)_TH$(TH)_F$(FUNC)
+CHAIN_ESPP=simu_chain_espp_K$(RATE)_TH$(TH)_S$(SITES)_N$(CHAIN_N)
 EPOXY_ESPP=simu_epoxy_espp_K$(RATE)_TH$(TH)_F$(FUNC)
 
 mirrorlj.txt: code/write_tabulated_potential.py
@@ -33,6 +34,14 @@ $(CHAIN_LAMMPS)_%/log.lammps $(CHAIN_LAMMPS)_%/dump_3d.h5: mirrorlj.txt in.chain
 	-var iseed $${ISEED} -var rate $(RATE) -var sites $(SITES) -var theta $(TH) -var N $(CHAIN_N) > out)
 
 chain_growth: $(CHAIN_LAMMPS)_$(RUN)/log.lammps $(CHAIN_LAMMPS)_$(RUN)/dump_3d.h5
+
+$(CHAIN_ESPP)_%/log.espp $(CHAIN_ESPP)_%/dump.h5: code/chain_run.py code/chain_h5md.py code/chain_setup.py
+	@mkdir -p $(CHAIN_ESPP)_$*
+	SEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
+	(cd $(CHAIN_ESPP)_$*; $(PY) ../code/chain_run.py $(CHAIN_N) --seed $${SEED} --rate $(RATE) \
+	 --interval $(TH) --sites $(SITES) --file dump.h5 > log.espp)
+
+chain_espp: $(CHAIN_ESPP)_$(RUN)/log.espp $(CHAIN_ESPP)_$(RUN)/dump.h5
 
 $(EPOXY_LAMMPS)_%/log.lammps $(EPOXY_LAMMPS)_%/nb.txt.gz: mirrorlj.txt in.epoxy
 	@mkdir -p $(EPOXY_LAMMPS)_$*
