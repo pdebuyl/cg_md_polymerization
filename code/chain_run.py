@@ -105,6 +105,7 @@ if args.file is not None:
 
 last_dump_step=0
 # Run system with non-capped potentials, no thermostat, fixed LJ epsilon and crosslinking
+if args.file is not None: traj_file.analyse()
 for k in range(1,args.loops+1):
     integrator.run(args.steps)
     fpls = fpl.size()
