@@ -42,7 +42,7 @@ $(CHAIN_ESPP)_%/log.espp $(CHAIN_ESPP)_%/dump.h5: code/chain_run.py code/chain_h
 	@mkdir -p $(CHAIN_ESPP)_$*
 	SEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	(cd $(CHAIN_ESPP)_$*; $(PY) ../code/chain_run.py $(CHAIN_N) --seed $${SEED} --rate $(RATE) \
-	 --interval $(TH) --sites $(SITES) --steps $(CHAIN_STEPS_ESPP) --dt 0.0025 --loops 400
+	 --interval $(TH) --sites $(SITES) --steps $(CHAIN_STEPS_ESPP) --dt 0.0025 --loops 400 \
 	--file dump.h5 > log.espp)
 
 chain_espp: $(CHAIN_ESPP)_$(RUN)/log.espp $(CHAIN_ESPP)_$(RUN)/dump.h5
