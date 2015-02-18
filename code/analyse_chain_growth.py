@@ -19,7 +19,7 @@ from scipy.optimize import leastsq
 from io import StringIO
 import matplotlib.pyplot as plt
 
-NNEIGH=3.5
+NNEIGH=3.25
 fraction = float(args.sites)/float(args.N)
 
 # Open lammps log file to extract thermodynamic observables
