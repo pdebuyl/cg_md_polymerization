@@ -72,7 +72,7 @@ run 30000
 unfix 1
 fix 1 all nve
 fix fbc all bond/create ${theta} 3 1 1.122462048309373 1 prob ${prob} ${eseed} iparam ${func} 3 jparam 1 1
-comm_modify cutoff 3
+comm_modify cutoff 3.5
 
 compute 1 all property/atom nbonds
 dump nb X custom 200 nb.txt.gz c_1
