@@ -19,14 +19,6 @@ EPOXY_ESPP=simu_epoxy_espp_K$(RATE)_TH$(TH)_F$(FUNC)
 mirrorlj.txt: code/write_tabulated_potential.py
 	python $< > $@
 
-simu_step_%/log.lammps simu_step_%/dump_3d.h5: mirrorlj.txt in.step
-	@mkdir -p simu_step_$*
-	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	BSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	(cd simu_step_$*; $(LMP) -i ../in.step -var vseed $${VSEED} -var bseed $${BSEED} -var prob $(STEP_PROB) )
-
-step_growth: simu_step_test/log.lammps simu_step_test/dump_3d.h5
-
 $(CHAIN_LAMMPS)_%/log.lammps $(CHAIN_LAMMPS)_%/dump_3d.h5: mirrorlj.txt in.chain
 	@mkdir -p $(CHAIN_LAMMPS)_$*
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
