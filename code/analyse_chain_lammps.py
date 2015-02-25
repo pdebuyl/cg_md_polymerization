@@ -36,6 +36,7 @@ for d in args.dirs:
     stop_indices = [(i,l) for (i,l) in enumerate(logfile) if l.startswith('Loop time')]
     time, e_tot, temp, e_kin, e_vdw, e_bond, e_pot, press, rho, n_bonds, n_bonds_max, bonds = from_log(logfile, start_indices[-1][0], stop_indices[-1][0])
     time -= time[0]
+    n_bonds += float(args.sites)/float(args.N)
     plt.plot(time, n_bonds)
     nmax = min(int(1./(args.rate*fraction)), len(time))
     nmax = len(time)

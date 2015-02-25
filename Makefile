@@ -19,14 +19,6 @@ EPOXY_ESPP=simu_epoxy_espp_K$(RATE)_TH$(TH)_F$(FUNC)
 mirrorlj.txt: code/write_tabulated_potential.py
 	python $< > $@
 
-simu_step_%/log.lammps simu_step_%/dump_3d.h5: mirrorlj.txt in.step
-	@mkdir -p simu_step_$*
-	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	BSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	(cd simu_step_$*; $(LMP) -i ../in.step -var vseed $${VSEED} -var bseed $${BSEED} -var prob $(STEP_PROB) )
-
-step_growth: simu_step_test/log.lammps simu_step_test/dump_3d.h5
-
 $(CHAIN_LAMMPS)_%/log.lammps $(CHAIN_LAMMPS)_%/dump_3d.h5: mirrorlj.txt in.chain
 	@mkdir -p $(CHAIN_LAMMPS)_$*
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
@@ -36,7 +28,7 @@ $(CHAIN_LAMMPS)_%/log.lammps $(CHAIN_LAMMPS)_%/dump_3d.h5: mirrorlj.txt in.chain
 	-var iseed $${ISEED} -var rate $(RATE) -var sites $(SITES) -var theta $(TH) -var N $(CHAIN_N) \
 	-var steps $(CHAIN_STEPS_LAMMPS) > out)
 
-chain_growth: $(CHAIN_LAMMPS)_$(RUN)/log.lammps $(CHAIN_LAMMPS)_$(RUN)/dump_3d.h5
+chain_lammps: $(CHAIN_LAMMPS)_$(RUN)/log.lammps $(CHAIN_LAMMPS)_$(RUN)/dump_3d.h5
 
 $(CHAIN_ESPP)_%/log.espp $(CHAIN_ESPP)_%/dump.h5: code/chain_run.py code/chain_h5md.py code/chain_setup.py
 	@mkdir -p $(CHAIN_ESPP)_$*
