@@ -1,18 +1,18 @@
-Polymerization in Molecular Dynamics with fix bond/create
-=========================================================
+Polymerization in Molecular Dynamics
+====================================
 
-Copyright © 2014 Pierre de Buyl
+Copyright © 2015 Pierre de Buyl
 
-lammps\_bond\_create is a repository containing reproducible computations for
-Molecular Dynamics simulations of Lennard-Jones particles
+cg\_md\_polymerization is a repository containing reproducible
+computations for Molecular Dynamics simulations of coarse-grained
+particles that undergo a polymerization process. Chain growth and step
+growth are demonstrated.
 
-ljrr is written by Pierre de Buyl and is released under the modified BSD license
-that can be found in the file LICENSE.
+This code is written by Pierre de Buyl and is released under the
+modified BSD license that can be found in the file LICENSE.
 
 Requirements and usage
 ----------------------
-
-ljrr requires:
 
 - [lammps](http://lammps.sandia.gov)
 - [Make](http://www.gnu.org/software/make/)
