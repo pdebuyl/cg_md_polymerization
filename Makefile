@@ -47,7 +47,7 @@ $(EPOXY_LAMMPS)_%/log.lammps $(EPOXY_LAMMPS)_%/nb.txt.gz: mirrorlj.txt in.epoxy
 	(cd $(EPOXY_LAMMPS)_$*; $(LMP) -i ../in.epoxy -var vseed $${VSEED} -var aseed $${ASEED} \
 	-var eseed $${ESEED} -var rate $(RATE) -var theta $(TH) -var func $(FUNC) )
 
-epoxy: $(EPOXY_LAMMPS)_$(RUN)/log.lammps $(EPOXY_LAMMPS)_$(RUN)/nb.txt.gz
+epoxy_lammps: $(EPOXY_LAMMPS)_$(RUN)/log.lammps $(EPOXY_LAMMPS)_$(RUN)/nb.txt.gz
 
 $(EPOXY_ESPP)_%/log.espp $(EPOXY_ESPP)_%/dump.h5: code/epoxy_run.py code/epoxy_h5md.py code/epoxy_setup.py
 	@mkdir -p $(EPOXY_ESPP)_$*
