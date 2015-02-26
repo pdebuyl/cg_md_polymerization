@@ -19,12 +19,12 @@ EPOXY_ESPP=simu_epoxy_espp_K$(RATE)_TH$(TH)_F$(FUNC)
 mirrorlj.txt: code/write_tabulated_potential.py
 	python $< > $@
 
-$(CHAIN_LAMMPS)_%/log.lammps $(CHAIN_LAMMPS)_%/dump_3d.h5: mirrorlj.txt in.chain
+$(CHAIN_LAMMPS)_%/log.lammps $(CHAIN_LAMMPS)_%/dump_3d.h5: mirrorlj.txt code/in.chain
 	@mkdir -p $(CHAIN_LAMMPS)_$*
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	CSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	ISEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	(cd $(CHAIN_LAMMPS)_$*; $(LMP) -i ../in.chain -var vseed $${VSEED} -var cseed $${CSEED} \
+	(cd $(CHAIN_LAMMPS)_$*; $(LMP) -i ../code/in.chain -var vseed $${VSEED} -var cseed $${CSEED} \
 	-var iseed $${ISEED} -var rate $(RATE) -var sites $(SITES) -var theta $(TH) -var N $(CHAIN_N) \
 	-var steps $(CHAIN_STEPS_LAMMPS) > out)
 
@@ -39,12 +39,12 @@ $(CHAIN_ESPP)_%/log.espp $(CHAIN_ESPP)_%/dump.h5: code/chain_run.py code/chain_h
 
 chain_espp: $(CHAIN_ESPP)_$(RUN)/log.espp $(CHAIN_ESPP)_$(RUN)/dump.h5
 
-$(EPOXY_LAMMPS)_%/log.lammps $(EPOXY_LAMMPS)_%/nb.txt.gz: mirrorlj.txt in.epoxy
+$(EPOXY_LAMMPS)_%/log.lammps $(EPOXY_LAMMPS)_%/nb.txt.gz: mirrorlj.txt code/in.epoxy
 	@mkdir -p $(EPOXY_LAMMPS)_$*
 	ASEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	ESEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	(cd $(EPOXY_LAMMPS)_$*; $(LMP) -i ../in.epoxy -var vseed $${VSEED} -var aseed $${ASEED} \
+	(cd $(EPOXY_LAMMPS)_$*; $(LMP) -i ../code/in.epoxy -var vseed $${VSEED} -var aseed $${ASEED} \
 	-var eseed $${ESEED} -var rate $(RATE) -var theta $(TH) -var func $(FUNC) )
 
 epoxy_lammps: $(EPOXY_LAMMPS)_$(RUN)/log.lammps $(EPOXY_LAMMPS)_$(RUN)/nb.txt.gz
