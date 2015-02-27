@@ -72,8 +72,7 @@ def DumpH5MD(filename, system, integrator, author, author_email=None, edges=None
         obs_dict['potential_energy'].append(potential, step, time)
         obs_dict['internal_energy'].append(Ek+potential, step, time)
         if f.n_states is not None:
-            local_species = np.array([system.storage.getParticle(pid).type for pid in range(maxParticleID+1)])
-            local_state = np.array([system.storage.getParticle(pid).state for pid in range(maxParticleID+1)])[local_species==f.species_to_count]
+            local_state = np.array([system.storage.getParticle(pid).state for pid in range(maxParticleID+1) if system.storage.getParticle(pid).type==f.species_to_count])
             obs_dict['statecount'].append(np.bincount(local_state, minlength=f.n_states), step, time)
     f.analyse = analyse
     return f
