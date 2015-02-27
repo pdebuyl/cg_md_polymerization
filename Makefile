@@ -57,7 +57,7 @@ epoxy_lammps: $(EPOXY_LAMMPS)_$(RUN)/log.lammps $(EPOXY_LAMMPS)_$(RUN)/nb.txt.gz
 $(EPOXY_ESPP)_%/log.espp $(EPOXY_ESPP)_%/dump.h5: code/epoxy_run.py code/epoxy_h5md.py code/epoxy_setup.py
 	@mkdir -p $(EPOXY_ESPP)_$*
 	SEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	(cd $(EPOXY_ESPP)_$*; $(PY) ../code/epoxy_run.py 200 80 --seed $${SEED} --rate $(RATE) \
-	 --interval $(TH) --file dump.h5 > log.espp)
+	(cd $(EPOXY_ESPP)_$*; $(PY) ../code/epoxy_run.py 2500 1000 --seed $${SEED} --rate $(RATE) \
+	 --interval $(TH) --file dump.h5 --dump-interval 1000 --loops 2000 > log.espp)
 
 epoxy_espp: $(EPOXY_ESPP)_$(RUN)/log.espp $(EPOXY_ESPP)_$(RUN)/dump.h5
