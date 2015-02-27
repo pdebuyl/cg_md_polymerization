@@ -78,4 +78,4 @@ compute 1 all property/atom nbonds
 dump nb X custom 200 nb.txt.gz c_1
 
 thermo_style custom time etotal temp ke evdwl ebond pe press density f_fbc[1] f_fbc[2]
-run 500000
+run 1000000
