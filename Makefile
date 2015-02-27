@@ -26,7 +26,10 @@ $(CHAIN_LAMMPS)_%/log.lammps $(CHAIN_LAMMPS)_%/dump_3d.h5: mirrorlj.txt code/$(L
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	CSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	ISEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
+	A1SEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
+	A4SEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	(cd $(CHAIN_LAMMPS)_$*; $(LMP) -i ../code/$(LAMMPS_CHAIN_FILE) -var vseed $${VSEED} -var cseed $${CSEED} \
+	-var a1seed $${A1SEED} -var a4seed $${A4SEED} \
 	-var iseed $${ISEED} -var rate $(RATE) -var sites $(SITES) -var theta $(TH) -var N $(CHAIN_N) \
 	-var steps $(CHAIN_STEPS_LAMMPS) > out)
 

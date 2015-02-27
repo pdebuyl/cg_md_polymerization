@@ -1,6 +1,7 @@
 # Simulation of crosslinking
 
-print "info: RATE ${rate} TH ${theta} VSEED ${vseed} CSEED ${cseed} ISEED ${iseed} SITES ${sites}"
+print "info: RATE ${rate} TH ${theta} SITES ${sites}"
+print "info: VSEED ${vseed} CSEED ${cseed} ISEED ${iseed} A1SEED ${a1seed} A4SEED ${a4seed}"
 
 # Setting a 3D periodic system with lj units
 units lj
@@ -19,8 +20,8 @@ print "info: prob ${prob}"
 variable NM equal ${N}-${sites}
 region box_region block 0 ${side} 0 ${side} 0 ${side}
 create_box 4 box_region extra/special/per/atom 336 extra/bond/per/atom 8 bond/types 1
-create_atoms 1 random ${NM} 78372 box_region
-create_atoms 4 random ${sites} 39981 box_region
+create_atoms 1 random ${NM} ${a1seed} box_region
+create_atoms 4 random ${sites} ${a4seed} box_region
 mass * 1.0
 
 velocity all create 1. ${vseed}
