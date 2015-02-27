@@ -104,7 +104,7 @@ for k in range(1, args.loops+1):
     integrator.run(args.steps)
     print fpl.size(),
     espresso.tools.analyse.info(system, integrator, per_atom=True)
-    if args.file is not None: traj_file.analyse()
+    if args.file is not None and k%2==0: traj_file.analyse()
     if args.file is not None and args.post_loops<0 and k%args.dump_interval==0:
         traj_file.dump()
         topo_file.dump()
