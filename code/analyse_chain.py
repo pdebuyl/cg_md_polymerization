@@ -38,6 +38,8 @@ def from_log(logfile,i0,i1):
 fitfunc = lambda p, t: 1*(1.-np.exp(-t*p[0]-p[1]))
 errfunc = lambda p, t, y: fitfunc(p, t) - y
 
+time_max = 0
+
 p_data = []
 phi_data = []
 for d in args.lammps:
@@ -46,26 +48,27 @@ for d in args.lammps:
     stop_indices = [(i,l) for (i,l) in enumerate(logfile) if l.startswith('Loop time')]
     time, e_tot, temp, e_kin, e_vdw, e_bond, e_pot, press, rho, n_bonds, n_bonds_max, bonds = from_log(logfile, start_indices[-1][0], stop_indices[-1][0])
     time -= time[0]
+    time_max = max(time_max, time.max())
     n_bonds += fraction
     phi_data.append(n_bonds)
     if args.plot_all: plt.plot(time, n_bonds)
-    nmax = min(int(1./(args.rate*fraction)), len(time))
-    nmax = len(time)
-    p, success = leastsq(errfunc, [args.rate*NNEIGH*fraction, 0./args.rate], args=(time[:nmax], n_bonds[:nmax]))
+    p, success = leastsq(errfunc, [args.rate*NNEIGH*fraction, 0./args.rate], args=(time, n_bonds))
     p_data.append(p)
     print p
 
-plt.plot(time, np.mean(phi_data, axis=0))
-p_data = np.array(p_data)
-print "lmp fit rate", p_data.mean(axis=0)[0]
-if args.fit:
-    plt.plot(time, fitfunc(p_data.mean(axis=0), time), 'k--')
+if len(args.lammps)>0:
+    plt.plot(time, np.mean(phi_data, axis=0))
+    p_data = np.array(p_data)
+    print "lmp fit rate", p_data.mean(axis=0)[0]
+    if args.fit:
+        plt.plot(time, fitfunc(p_data.mean(axis=0), time), 'k--')
 
 p_data = []
 phi_data = []
 for d in args.espp:
     a = h5py.File(os.path.join(os.getcwd(), d, 'dump.h5'), 'r')
     sc_time = a['/observables/statecount/time'][:]
+    time_max = max(time_max, sc_time.max())
     sc = a['/observables/statecount/value']
     phi = 1. - sc[:,0]/float(args.N)
     phi_data.append(phi)
@@ -75,12 +78,16 @@ for d in args.espp:
     p_data.append(p)
     print p
 
-plt.plot(sc_time, np.mean(phi_data, axis=0))
-p_data = np.array(p_data)
-print "esp fit rate", p_data.mean(axis=0)[0]
+if len(args.espp)>0:
+    plt.plot(sc_time, np.mean(phi_data, axis=0))
+    p_data = np.array(p_data)
+    print "esp fit rate", p_data.mean(axis=0)[0]
+    if args.fit:
+        plt.plot(time, fitfunc(p_data.mean(axis=0), time), 'k--')
+
 print "th. rate", args.rate*NNEIGH*fraction
-if args.fit:
-    plt.plot(time, fitfunc(p_data.mean(axis=0), time), 'k--')
-plt.plot(time, 1*(1.-np.exp(-time*args.rate*NNEIGH*fraction)))
+if time_max>0:
+    time = np.linspace(0,1,512)*time_max
+    plt.plot(time, 1*(1.-np.exp(-time*args.rate*NNEIGH*fraction)))
 
 plt.show()
