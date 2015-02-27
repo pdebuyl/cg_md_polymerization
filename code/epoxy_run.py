@@ -99,6 +99,7 @@ if args.file is not None:
         topo_file = epoxy_h5md.DumpTopo(traj_file, 'atoms', 'crosslinks', system, integrator, fpl, time=True, chunks=(8,128,2))
 
 # Run system with non-capped potentials, no thermostat, fixed LJ epsilon and crosslinking
+if args.file is not None: traj_file.analyse()
 for k in range(1, args.loops+1):
     integrator.run(args.steps)
     print fpl.size(),
