@@ -16,15 +16,17 @@ EPOXY_LAMMPS=simu_epoxy_lammps_K$(RATE)_TH$(TH)_F$(FUNC)
 CHAIN_ESPP=simu_chain_espp_K$(RATE)_TH$(TH)_S$(SITES)_N$(CHAIN_N)
 EPOXY_ESPP=simu_epoxy_espp_K$(RATE)_TH$(TH)_F$(FUNC)
 
+LAMMPS_CHAIN_FILE=in.chain
+
 mirrorlj.txt: code/write_tabulated_potential.py
 	python $< > $@
 
-$(CHAIN_LAMMPS)_%/log.lammps $(CHAIN_LAMMPS)_%/dump_3d.h5: mirrorlj.txt code/in.chain
+$(CHAIN_LAMMPS)_%/log.lammps $(CHAIN_LAMMPS)_%/dump_3d.h5: mirrorlj.txt code/$(LAMMPS_CHAIN_FILE)
 	@mkdir -p $(CHAIN_LAMMPS)_$*
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	CSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	ISEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
-	(cd $(CHAIN_LAMMPS)_$*; $(LMP) -i ../code/in.chain -var vseed $${VSEED} -var cseed $${CSEED} \
+	(cd $(CHAIN_LAMMPS)_$*; $(LMP) -i ../code/$(LAMMPS_CHAIN_FILE) -var vseed $${VSEED} -var cseed $${CSEED} \
 	-var iseed $${ISEED} -var rate $(RATE) -var sites $(SITES) -var theta $(TH) -var N $(CHAIN_N) \
 	-var steps $(CHAIN_STEPS_LAMMPS) > out)
 
