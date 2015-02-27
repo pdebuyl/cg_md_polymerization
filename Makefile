@@ -47,7 +47,7 @@ $(EPOXY_LAMMPS)_%/log.lammps $(EPOXY_LAMMPS)_%/nb.txt.gz: mirrorlj.txt code/in.e
 	VSEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	ESEED=$(shell head --bytes=2 /dev/urandom | od -t u2 | head -n1 | awk '{print $$2}') ; \
 	(cd $(EPOXY_LAMMPS)_$*; $(LMP) -i ../code/in.epoxy -var vseed $${VSEED} -var aseed $${ASEED} \
-	-var eseed $${ESEED} -var rate $(RATE) -var theta $(TH) -var func $(FUNC) )
+	-var eseed $${ESEED} -var rate $(RATE) -var theta $(TH) -var func $(FUNC) > out)
 
 epoxy_lammps: $(EPOXY_LAMMPS)_$(RUN)/log.lammps $(EPOXY_LAMMPS)_$(RUN)/nb.txt.gz
 
