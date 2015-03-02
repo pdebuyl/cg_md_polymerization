@@ -11,6 +11,10 @@ growth are demonstrated.
 This code is written by Pierre de Buyl and is released under the
 modified BSD license that can be found in the file LICENSE.
 
+The appropriate citation when using this algorithm is
+[arXiv:1409.7498](http://arxiv.org/abs/1409.7498) (or the corresponding
+published version when available).
+
 Requirements and usage
 ----------------------
 
