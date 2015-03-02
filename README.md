@@ -37,3 +37,19 @@ To reproduce the computations, invoke the make command.
 
 The seeds that are needed in the simulations, for the random number generators,
 are generated from the `/dev/urandom` device of your computer.
+
+Parameters can be given to the simulations:
+- `RATE` is the intrisic reaction rate k.
+- `TH` is the interval between executions of the polymerization algorithm.
+- Depending on the type of simulation, further parameters are available (number
+  of particles, functionality of crosslinkers, number of time steps, etc).
+
+Content of the repository
+-------------------------
+
+The Python programs for ESPResSo++ are `code/chain_run.py` and
+`code/epoxy_run.py` and the input scripts for LAMMPS are `code/in.chain` and
+`code/in.epoxy`.
+
+Basic analysis programs are given for the two types of simulations:
+`code/analyse_chain.py` and `code/analyse_epoxy.py`.
