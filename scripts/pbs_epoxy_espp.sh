@@ -8,5 +8,5 @@ cd $PBS_O_WORKDIR
 source $HOME/espressopp/ESPRC
 
 NPROC=$( cat $PBS_NODEFILE  |  wc  -l )
-make epoxy_espp PY="mpirun -n ${NPROC} -f ${PBS_NODEFILE} python" RUN=${ll} FUNC=${FUNC}
+make epoxy_espp PY="mpirun -n ${NPROC} -f ${PBS_NODEFILE} python" RUN=${ll} FUNC=${FUNC} RATE=${RATE}
 

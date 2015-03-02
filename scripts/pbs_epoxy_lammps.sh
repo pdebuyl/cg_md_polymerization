@@ -7,5 +7,5 @@ module load intel/2014a
 cd $PBS_O_WORKDIR
 NPROC=$( cat $PBS_NODEFILE  |  wc  -l )
 
-make epoxy_lammps LMP="mpirun -n ${NPROC} -f ${PBS_NODEFILE} ${HOME}/lammps/src/lmp_ompi_icc" RUN=${ll} FUNC=${FUNC}
+make epoxy_lammps LMP="mpirun -n ${NPROC} -f ${PBS_NODEFILE} ${HOME}/lammps/src/lmp_ompi_icc" RUN=${ll} FUNC=${FUNC} RATE=${RATE}
 
