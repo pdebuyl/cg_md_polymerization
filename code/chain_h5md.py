@@ -1,16 +1,16 @@
 # Pierre de Buyl 2014
 # This file is licensed under the modified BSD license
 
-import espresso
-from espresso import Real3D
+import espressopp
+from espressopp import Real3D
 import pyh5md
 import numpy as np
 
 def DumpH5MD(filename, system, integrator, author, author_email=None, edges=None, edges_time=False, n_states=None):
-    espresso.Version().info()
-    f = pyh5md.H5MD_File(filename, 'w', creator='espressopp', creator_version=espresso.Version().info(), author=author, author_email=author_email)
+    espressopp.Version().info()
+    f = pyh5md.H5MD_File(filename, 'w', creator='espressopppp', creator_version=espressopp.Version().info(), author=author, author_email=author_email)
     atoms = f.particles_group('atoms')
-    maxParticleID = int(espresso.analysis.MaxPID(system).compute())
+    maxParticleID = int(espressopp.analysis.MaxPID(system).compute())
     pos = atoms.trajectory('position', (maxParticleID+1,3), np.float64)
     species = atoms.trajectory('species', (maxParticleID+1,), np.int32)
     state = atoms.trajectory('state', (maxParticleID+1,), np.int32)
@@ -18,7 +18,7 @@ def DumpH5MD(filename, system, integrator, author, author_email=None, edges=None
         f.box = atoms.box(dimension=3, boundary=['periodic', 'periodic', 'periodic'], edges=edges, time=True)
     else:
         f.box = atoms.box(dimension=3, boundary=['periodic', 'periodic', 'periodic'], edges=edges)
-    f.NPart = espresso.analysis.NPart(system).compute()
+    f.NPart = espressopp.analysis.NPart(system).compute()
     f.observable('particle_number', data=int(f.NPart), time=False)
     f.f['observables'].attrs['dimension']=3
     obs_dict = {}
@@ -35,7 +35,7 @@ def DumpH5MD(filename, system, integrator, author, author_email=None, edges=None
     def dump():
         step = integrator.step
         time = integrator.step*integrator.dt
-        maxParticleID = int(espresso.analysis.MaxPID(system).compute())
+        maxParticleID = int(espressopp.analysis.MaxPID(system).compute())
         if maxParticleID>pos.value.shape[1]:
             raise ValueError('System too large for dataset')
         r = np.array(
@@ -53,11 +53,11 @@ def DumpH5MD(filename, system, integrator, author, author_email=None, edges=None
     def analyse():
         step = integrator.step
         time = integrator.step*integrator.dt
-        T = espresso.analysis.Temperature(system).compute()
+        T = espressopp.analysis.Temperature(system).compute()
         obs_dict['temperature'].append(T, step, time)
-        P      = espresso.analysis.Pressure(system).compute()
+        P      = espressopp.analysis.Pressure(system).compute()
         obs_dict['pressure'].append(P, step, time)
-        Pij    = espresso.analysis.PressureTensor(system).compute()
+        Pij    = espressopp.analysis.PressureTensor(system).compute()
         obs_dict['pressure_tensor'].append(Pij, step, time)
         Ek     = (3.0/2.0) * T
         obs_dict['kinetic_energy'].append(Ek, step, time)

@@ -39,7 +39,7 @@ if args.stop_at>0:
 elif args.stop_at==0:
     assert args.sites==0
 
-import espresso
+import espressopp
 import chain_setup
 import random
 
@@ -53,37 +53,37 @@ integrator.dt = args.dt
 epsilon_start = 0.1
 epsilon = 1.0
 
-espresso.tools.analyse.info(system, integrator, per_atom=True)
+espressopp.tools.analyse.info(system, integrator, per_atom=True)
 
 # Run system with capped potentials, thermostat and increasing LJ epsilon
 for k in range(args.warmup_loops):
-    LJCapped.setPotential(0,0,espresso.interaction.LennardJonesCapped(epsilon_start + (epsilon-epsilon_start)*k*1.0/(args.warmup_loops-1), chain_setup.sigma, chain_setup.rc, caprad=chain_setup.caprad_LJ))
+    LJCapped.setPotential(0,0,espressopp.interaction.LennardJonesCapped(epsilon_start + (epsilon-epsilon_start)*k*1.0/(args.warmup_loops-1), chain_setup.sigma, chain_setup.rc, caprad=chain_setup.caprad_LJ))
     integrator.run(args.warmup_steps)
-    espresso.tools.analyse.info(system, integrator, per_atom=True)
+    espressopp.tools.analyse.info(system, integrator, per_atom=True)
 
 # Remove LJ Capped potential
 system.removeInteraction(0)
 
 # Add non-capped LJ potential
-LJ = espresso.interaction.VerletListLennardJones(verletList)
-LJ.setPotential(0, 0, espresso.interaction.LennardJones(epsilon, chain_setup.sigma, chain_setup.rc))
+LJ = espressopp.interaction.VerletListLennardJones(verletList)
+LJ.setPotential(0, 0, espressopp.interaction.LennardJones(epsilon, chain_setup.sigma, chain_setup.rc))
 system.addInteraction(LJ)
 
 # Run system with non-capped potentials, thermostat and fixed LJ epsilon
 for k in range(args.warmup_loops):
     integrator.run(args.warmup_steps)
-    espresso.tools.analyse.info(system, integrator, per_atom=True)
+    espressopp.tools.analyse.info(system, integrator, per_atom=True)
 
 thermostat.disconnect()
-resetter = espresso.analysis.TotalVelocity(system)
+resetter = espressopp.analysis.TotalVelocity(system)
 resetter.reset()
 
-fpl = espresso.FixedPairList(system.storage)
-potMirrorLennardJones = espresso.interaction.MirrorLennardJones(epsilon=1.0, sigma=1.0)
-interMirrorLennardJones = espresso.interaction.FixedPairListMirrorLennardJones(system, fpl, potMirrorLennardJones)
+fpl = espressopp.FixedPairList(system.storage)
+potMirrorLennardJones = espressopp.interaction.MirrorLennardJones(epsilon=1.0, sigma=1.0)
+interMirrorLennardJones = espressopp.interaction.FixedPairListMirrorLennardJones(system, fpl, potMirrorLennardJones)
 system.addInteraction(interMirrorLennardJones)
 
-AR = espresso.integrator.AssociationReaction(system, verletList, fpl, system.storage)
+AR = espressopp.integrator.AssociationReaction(system, verletList, fpl, system.storage)
 AR.typeA = 0
 AR.typeB = 0
 AR.deltaA = -1
@@ -110,7 +110,7 @@ for k in range(1,args.loops+1):
     integrator.run(args.steps)
     fpls = fpl.size()
     print fpls,
-    espresso.tools.analyse.info(system, integrator, per_atom=True)
+    espressopp.tools.analyse.info(system, integrator, per_atom=True)
     if args.file is not None: traj_file.analyse()
     if args.file is not None and args.stop_at<0 and k%args.dump_interval==0:
         traj_file.dump()
@@ -136,7 +136,7 @@ if args.file is not None:
 # crosslinking
 for k in range(1, args.loops+1):
     integrator.run(args.steps)
-    espresso.tools.analyse.info(system, integrator, per_atom=True)
+    espressopp.tools.analyse.info(system, integrator, per_atom=True)
     if args.file is not None: traj_file.analyse()
     if args.file is not None and k%args.dump_interval==0:
         traj_file.dump()

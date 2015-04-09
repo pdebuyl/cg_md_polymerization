@@ -19,7 +19,7 @@ parser.add_argument('--dump-interval', type=int, help='Interval at which to dump
 parser.add_argument('--seed', type=int, help='Seed for the rng.')
 args = parser.parse_args()
 
-import espresso
+import espressopp
 import epoxy_setup
 
 system, integrator, LJCapped, verletList, FENECapped, chainFPL, thermostat, num_particles = epoxy_setup.chains_x_system(args.nchains, args.chain_length, args.nx, density=args.density, seed=args.seed)
@@ -29,13 +29,13 @@ integrator.dt = args.dt
 epsilon_start = 0.1
 epsilon = 1.0
 
-espresso.tools.analyse.info(system, integrator, per_atom=True)
+espressopp.tools.analyse.info(system, integrator, per_atom=True)
 
 # Run system with capped potentials, thermostat and increasing LJ epsilon
 for k in range(args.warmup_loops):
-    LJCapped.setPotential(0,0,espresso.interaction.LennardJonesCapped(epsilon_start + (epsilon-epsilon_start)*k*1.0/(args.warmup_loops-1), epoxy_setup.sigma, epoxy_setup.rc, caprad=epoxy_setup.caprad_LJ))
+    LJCapped.setPotential(0,0,espressopp.interaction.LennardJonesCapped(epsilon_start + (epsilon-epsilon_start)*k*1.0/(args.warmup_loops-1), epoxy_setup.sigma, epoxy_setup.rc, caprad=epoxy_setup.caprad_LJ))
     integrator.run(args.warmup_steps)
-    espresso.tools.analyse.info(system, integrator, per_atom=True)
+    espressopp.tools.analyse.info(system, integrator, per_atom=True)
 
 # Remove FENE Capped potential
 system.removeInteraction(1)
@@ -43,21 +43,21 @@ system.removeInteraction(1)
 system.removeInteraction(0)
 
 # Add non-capped LJ potential
-LJ = espresso.interaction.VerletListLennardJones(verletList)
-LJ.setPotential(0, 0, espresso.interaction.LennardJones(epsilon, epoxy_setup.sigma, epoxy_setup.rc))
+LJ = espressopp.interaction.VerletListLennardJones(verletList)
+LJ.setPotential(0, 0, espressopp.interaction.LennardJones(epsilon, epoxy_setup.sigma, epoxy_setup.rc))
 system.addInteraction(LJ)
 
 # Add non-capped FENE potential
-FENE = espresso.interaction.FixedPairListFENE(system, chainFPL, espresso.interaction.FENE(epoxy_setup.K, 0.0, epoxy_setup.rMax))
+FENE = espressopp.interaction.FixedPairListFENE(system, chainFPL, espressopp.interaction.FENE(epoxy_setup.K, 0.0, epoxy_setup.rMax))
 system.addInteraction(FENE)
 
 # Run system with non-capped potentials, thermostat and fixed LJ epsilon
 for k in range(args.warmup_loops):
     integrator.run(args.warmup_steps)
-    espresso.tools.analyse.info(system, integrator, per_atom=True)
+    espressopp.tools.analyse.info(system, integrator, per_atom=True)
 
 thermostat.disconnect()
-resetter = espresso.analysis.TotalVelocity(system)
+resetter = espressopp.analysis.TotalVelocity(system)
 resetter.reset()
 
 for i in range(args.nchains):
@@ -69,15 +69,15 @@ for i in range(args.nx):
   system.storage.modifyParticle(pid, 'state', args.functionality)
   pid += 1
 
-LJ.setPotential(0, 1, espresso.interaction.LennardJones(epsilon, epoxy_setup.sigma, epoxy_setup.rc))
-LJ.setPotential(1, 1, espresso.interaction.LennardJones(epsilon, epoxy_setup.sigma, epoxy_setup.rc))
+LJ.setPotential(0, 1, espressopp.interaction.LennardJones(epsilon, epoxy_setup.sigma, epoxy_setup.rc))
+LJ.setPotential(1, 1, espressopp.interaction.LennardJones(epsilon, epoxy_setup.sigma, epoxy_setup.rc))
 
-fpl = espresso.FixedPairList(system.storage)
-potMirrorLennardJones = espresso.interaction.MirrorLennardJones(epsilon=1.0, sigma=1.0)
-interMirrorLennardJones = espresso.interaction.FixedPairListMirrorLennardJones(system, fpl, potMirrorLennardJones)
+fpl = espressopp.FixedPairList(system.storage)
+potMirrorLennardJones = espressopp.interaction.MirrorLennardJones(epsilon=1.0, sigma=1.0)
+interMirrorLennardJones = espressopp.interaction.FixedPairListMirrorLennardJones(system, fpl, potMirrorLennardJones)
 system.addInteraction(interMirrorLennardJones)
 
-AR = espresso.integrator.AssociationReaction(system, verletList, fpl, system.storage)
+AR = espressopp.integrator.AssociationReaction(system, verletList, fpl, system.storage)
 AR.typeA = 1
 AR.typeB = 0
 AR.deltaA = -1
@@ -103,7 +103,7 @@ if args.file is not None: traj_file.analyse()
 for k in range(1, args.loops+1):
     integrator.run(args.steps)
     print fpl.size(),
-    espresso.tools.analyse.info(system, integrator, per_atom=True)
+    espressopp.tools.analyse.info(system, integrator, per_atom=True)
     if args.file is not None and k%2==0: traj_file.analyse()
     if args.file is not None and args.post_loops<0 and k%args.dump_interval==0:
         traj_file.dump()
@@ -122,7 +122,7 @@ if args.file is not None: epoxy_h5md.DumpTopo(traj_file, 'atoms', 'crosslinks', 
 for k in range(1, args.post_loops+1):
     integrator.run(args.steps)
     print fpl.size(),
-    espresso.tools.analyse.info(system, integrator, per_atom=True)
+    espressopp.tools.analyse.info(system, integrator, per_atom=True)
     if args.file is not None and k%args.dump_interval==0:
         traj_file.dump()
 
