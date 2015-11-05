@@ -54,3 +54,8 @@ The Python programs for ESPResSo++ are `code/chain_run.py` and
 
 Basic analysis programs are given for the two types of simulations:
 `code/analyse_chain.py` and `code/analyse_epoxy.py`.
+
+Contributors
+------------
+
+Jakub Krajniak
