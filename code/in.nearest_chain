@@ -55,8 +55,8 @@ unfix 1
 
 timestep 0.0025
 fix 1 all nve
-fix chaining all bond/create ${theta} 2 1 1.122462048309373 1 prob ${prob} ${cseed} iparam 2 3 jparam 1 2
-fix initiator all bond/create ${theta} 4 1 1.122462048309373 1 prob ${prob} ${iseed} iparam 1 3 jparam 1 2
+fix chaining all bond/create ${theta} 2 1 1.122462048309373 1 prob ${prob} ${cseed} iparam 2 3 jparam 1 2 select nearest keep_bondcount no
+fix initiator all bond/create ${theta} 4 1 1.122462048309373 1 prob ${prob} ${iseed} iparam 1 3 jparam 1 2 select nearest keep_bondcount no 
 comm_modify cutoff 4.0
 
 run ${steps}
