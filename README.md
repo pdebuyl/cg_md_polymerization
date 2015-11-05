@@ -12,8 +12,9 @@ This code is written by Pierre de Buyl and is released under the
 modified BSD license that can be found in the file LICENSE.
 
 The appropriate citation when using this algorithm is
-[arXiv:1409.7498](http://arxiv.org/abs/1409.7498) (or the corresponding
-published version when available).
+P. de Buyl and E. Nies, J. Chem. Phys. **142**, 134102 (2015)
+[doi:10.1063/1.4916313](http://dx.doi.org/10.1063/1.4916313)
+[arXiv:1409.7498](http://arxiv.org/abs/1409.7498). Version 1.0 of this code was used in the publication.
 
 Requirements and usage
 ----------------------
